@@ -53,10 +53,18 @@ export default function Home() {
       }
     } else if (selectMode === 'range') {
       if (Array.isArray(date)) {
-        setTempRange(date);
+        // Đảm bảo thứ tự ngày: [start, end]
+        const [d1, d2] = date;
+        const start = d1 < d2 ? d1 : d2;
+        const end = d1 > d2 ? d1 : d2;
+        setTempRange([start, end]);
       } else {
         if (!tempRange[0]) setTempRange([date, null]);
-        else setTempRange([tempRange[0], date]);
+        else {
+          const start = tempRange[0] < date ? tempRange[0] : date;
+          const end = tempRange[0] > date ? tempRange[0] : date;
+          setTempRange([start, end]);
+        }
       }
     }
   };
@@ -67,7 +75,10 @@ export default function Home() {
       setSelectedGroups(prev => [...prev, { type: 'single', days: [tempRange[0]] }]);
       setTempRange([null, null]);
     } else if (selectMode === 'range' && tempRange[0] && tempRange[1]) {
-      setSelectedGroups(prev => [...prev, { type: 'range', days: [tempRange[0], tempRange[1]] }]);
+      // Đảm bảo thứ tự ngày: [start, end]
+      const start = tempRange[0] < tempRange[1] ? tempRange[0] : tempRange[1];
+      const end = tempRange[0] > tempRange[1] ? tempRange[0] : tempRange[1];
+      setSelectedGroups(prev => [...prev, { type: 'range', days: [start, end] }]);
       setTempRange([null, null]);
     }
   };
